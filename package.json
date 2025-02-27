@@ -1,0 +1,29 @@
+{
+  "name": "weikio-server",
+  "version": "0.1.0",
+  "description": "MCP server for interacting with Weik.io CLI",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "weikio-server": "./build/index.js"
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc && node -e \"require('fs').chmodSync('build/index.js', '755')\"",
+    "prepare": "npm run build",
+    "watch": "tsc --watch",
+    "inspector": "npx @modelcontextprotocol/inspector build/index.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "0.6.0",
+    "axios": "^1.6.7",
+    "js-yaml": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/node": "^20.11.24",
+    "typescript": "^5.3.3"
+  }
+}
