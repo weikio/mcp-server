@@ -3,6 +3,7 @@ FROM node:20-alpine
 
 # Install .NET 8 SDK
 RUN apk add --no-cache \
+    bash \
     icu-libs \
     krb5-libs \
     libgcc \
