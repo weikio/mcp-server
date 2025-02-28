@@ -160,6 +160,37 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           properties: {},
           required: []
         }
+      },
+      {
+        name: "list_profiles",
+        description: "List all Weik.io profiles",
+        inputSchema: {
+          type: "object",
+          properties: {},
+          required: []
+        }
+      },
+      {
+        name: "add_profile",
+        description: "Add a new Weik.io profile",
+        inputSchema: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              description: "Profile name"
+            },
+            url: {
+              type: "string",
+              description: "Backend URL"
+            },
+            apiKey: {
+              type: "string",
+              description: "API key"
+            }
+          },
+          required: ["name", "url", "apiKey"]
+        }
       }
     ]
   };
@@ -364,6 +395,37 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         content: [{
           type: "text",
           text: dockerComposeConfig
+        }]
+      };
+    }
+
+    case "list_profiles": {
+      const output = await executeWeikioCommand("profiles ls");
+      return {
+        content: [{
+          type: "text",
+          text: output
+        }]
+      };
+    }
+
+    case "add_profile": {
+      const name = String(request.params.arguments?.name);
+      const url = String(request.params.arguments?.url);
+      const apiKey = String(request.params.arguments?.apiKey);
+      
+      if (!name || !url || !apiKey) {
+        throw new McpError(
+          ErrorCode.InvalidParams,
+          "Profile name, URL, and API key are required"
+        );
+      }
+
+      const output = await executeWeikioCommand(`profiles add "${name}" "${url}" "${apiKey}"`);
+      return {
+        content: [{
+          type: "text",
+          text: output
         }]
       };
     }

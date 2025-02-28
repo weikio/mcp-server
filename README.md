@@ -33,6 +33,8 @@ The MCP server currently provides:
 - Apache Camel Kamelet metadata 
 - Basic Weik.io CLI operations
 - Integration type decision support
+- Weik.io profile management
+- Docker Compose configuration for local Weik.io instances
 
 ### Integration Type Decision Support
 
@@ -285,13 +287,25 @@ weikio-server/
 - `run_camel_jbang`: Execute Camel scripts for quick testing
 
 ### 5. Local Weik.io Management
-- `start_local_weikio`: Start local Weik.io using Docker Compose
-- `stop_local_weikio`: Stop the running environment
-- `restart_local_weikio`: Restart for quick refresh
-- `get_weikio_status`: Simple health check and status reporting
-- `reset_local_weikio`: Return environment to clean state
+- `get_docker_compose`: Get a Docker Compose file for setting up a local Weik.io instance (implemented)
+- `start_local_weikio`: Start local Weik.io using Docker Compose (planned)
+- `stop_local_weikio`: Stop the running environment (planned)
+- `restart_local_weikio`: Restart for quick refresh (planned)
+- `get_weikio_status`: Simple health check and status reporting (planned)
+- `reset_local_weikio`: Return environment to clean state (planned)
 
-### 6. Publishing Tools
+### 6. Profile Management
+- `list_profiles`: List all Weik.io profiles (implemented)
+- `add_profile`: Add a new Weik.io profile with name, URL, and API key (implemented)
+
+These tools enable connecting to different Weik.io instances by managing profiles. When a new profile is added, it becomes the default profile for subsequent operations.
+
+Example workflow:
+1. Check existing profiles with `list_profiles`
+2. Add a new profile with `add_profile` if needed
+3. Verify connection with `list_agents` to ensure the profile works correctly
+
+### 7. Publishing Tools
 - `generate_push_commands`: Create commands to push to Weik.io
 - `create_deployment_checklist`: Generate pre-deployment verification steps
 
@@ -465,6 +479,27 @@ These tools are integrated directly into the MCP server's capabilities, providin
 ## Local Weik.io Environment
 
 The MCP server provides streamlined management of local Weik.io instances:
+
+### Docker Compose Configuration
+
+The MCP server includes a tool called `get_docker_compose` that provides a ready-to-use Docker Compose configuration for running a local Weik.io environment. The configuration includes:
+
+- Traefik for routing (accessible at http://weikio.localtest.me:8000)
+- NATS for messaging
+- Weik.io Backend (with default credentials dev@weik.io/password and API key "api.key")
+- Weik.io UI
+- Weik.io Agent
+- API Management
+
+To use this configuration:
+1. Get the Docker Compose file with `get_docker_compose`
+2. Save it to a file (e.g., `docker-compose.yml`)
+3. Run `docker-compose up -d` to start the environment
+4. Connect to the local instance by adding a profile:
+   ```
+   weikio profiles add "local" "http://backend.localtest.me:8000" "api.key"
+   ```
+5. Verify the connection with `weikio agents ls`
 
 ### Instance Management
 - One-command startup of complete Weik.io environment
