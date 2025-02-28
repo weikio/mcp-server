@@ -595,6 +595,13 @@ The MCP server can be run as a Docker container, with automated builds via GitHu
 
 The MCP server is containerized using Docker, making it easy to deploy and run in various environments. The Docker image is built on Node.js Alpine for a minimal footprint.
 
+The Docker build process:
+1. Copies all source files into the container
+2. Installs all dependencies (including dev dependencies)
+3. Builds the TypeScript project
+4. Prunes dev dependencies for a smaller final image
+5. Sets up the entry point
+
 #### Running the Docker Container
 
 ```bash
@@ -603,6 +610,18 @@ docker pull ghcr.io/[your-github-username]/weikio-server:latest
 
 # Run the container
 docker run -it ghcr.io/[your-github-username]/weikio-server
+```
+
+#### Building Locally
+
+You can also build and run the Docker image locally:
+
+```bash
+# Build the image
+docker build -t weikio-server .
+
+# Run the container
+docker run -it weikio-server
 ```
 
 ### CI/CD Pipeline

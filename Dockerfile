@@ -4,13 +4,13 @@ FROM node:20-alpine
 # Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
-COPY package*.json ./
-RUN npm ci --only=production
+# Copy package files, source code, and metadata
+COPY . .
 
-# Copy source code and built files
-COPY build/ ./build/
-COPY metadata/ ./metadata/
+# Install dependencies, build TypeScript, and prune dev dependencies
+RUN npm ci && \
+    npm run build && \
+    npm prune --production
 
 # Set executable permissions for the entry point
 RUN chmod +x ./build/index.js
