@@ -596,11 +596,17 @@ The MCP server can be run as a Docker container, with automated builds via GitHu
 The MCP server is containerized using Docker, making it easy to deploy and run in various environments. The Docker image is built on Node.js Alpine for a minimal footprint.
 
 The Docker build process:
-1. Copies all source files into the container
-2. Installs all dependencies (including dev dependencies)
-3. Builds the TypeScript project
-4. Prunes dev dependencies for a smaller final image
-5. Sets up the entry point
+1. Installs .NET 8 SDK and Weikio CLI
+2. Copies all source files into the container
+3. Installs all dependencies (including dev dependencies)
+4. Builds the TypeScript project
+5. Prunes dev dependencies for a smaller final image
+6. Sets up the entry point
+
+The Docker image includes:
+- Node.js 20 (Alpine)
+- .NET 8 SDK
+- Weikio CLI (global tool)
 
 #### Running the Docker Container
 
