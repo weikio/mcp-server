@@ -606,10 +606,10 @@ The Docker build process:
 
 ```bash
 # Pull the latest image
-docker pull ghcr.io/[your-github-username]/weikio-server:latest
+docker pull ghcr.io/weikio/mcp-server:latest
 
 # Run the container
-docker run -it ghcr.io/[your-github-username]/weikio-server
+docker run -it ghcr.io/weikio/mcp-server:latest
 ```
 
 #### Building Locally
@@ -622,6 +622,74 @@ docker build -t weikio-server .
 
 # Run the container
 docker run -it weikio-server
+```
+
+#### Using as an MCP Server
+
+To use the Docker image as an MCP server in your AI assistant configuration:
+
+1. Add the server to your MCP configuration file (e.g., `cline_mcp_settings.json` for Claude):
+
+```json
+{
+  "mcpServers": {
+    "weikio": {
+      "command": "docker",
+      "args": [
+        "run", 
+        "-i", 
+        "--rm", 
+        "ghcr.io/weikio/mcp-server:latest"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
+```
+
+2. If you need to access local resources from the Docker container, you may need to add additional Docker arguments:
+
+```json
+{
+  "mcpServers": {
+    "weikio": {
+      "command": "docker",
+      "args": [
+        "run", 
+        "-i", 
+        "--rm",
+        "--network=host",
+        "ghcr.io/weikio/mcp-server:latest"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
+```
+
+3. For Windows users, to access services running on the host machine, use `host.docker.internal` instead of `localhost`:
+
+```json
+{
+  "mcpServers": {
+    "weikio": {
+      "command": "docker",
+      "args": [
+        "run", 
+        "-i", 
+        "--rm",
+        "ghcr.io/weikio/mcp-server:latest"
+      ],
+      "env": {
+        "HOST_URL": "http://host.docker.internal:8000"
+      },
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
 ```
 
 ### CI/CD Pipeline
