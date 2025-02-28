@@ -11,6 +11,7 @@ import {
 import { exec } from "child_process";
 import { promisify } from "util";
 import { metadataService, Component, Kamelet } from "./metadata-service.js";
+import { integrationTypesService } from "./integration-types-service.js";
 
 const execAsync = promisify(exec);
 
@@ -79,6 +80,17 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             }
           },
           required: ["filepath"]
+        }
+      },
+      
+      // Integration advisor tools
+      {
+        name: "get_supported_integration_types",
+        description: "Get information about supported integration types in Weik.io",
+        inputSchema: {
+          type: "object",
+          properties: {},
+          required: []
         }
       },
       
@@ -173,6 +185,16 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         content: [{
           type: "text",
           text: output
+        }]
+      };
+    }
+    
+    // Integration advisor tools
+    case "get_supported_integration_types": {
+      return {
+        content: [{
+          type: "text",
+          text: JSON.stringify(integrationTypesService.getIntegrationTypes(), null, 2)
         }]
       };
     }

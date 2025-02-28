@@ -32,6 +32,28 @@ The MCP server currently provides:
 - Apache Camel component metadata
 - Apache Camel Kamelet metadata 
 - Basic Weik.io CLI operations
+- Integration type decision support
+
+### Integration Type Decision Support
+
+The server now includes a tool called `get_supported_integration_types` that provides detailed information about the supported integration types in Weik.io:
+
+1. **Apache Camel Based Integration Flow**
+   - Description: A flexible integration framework implementing Enterprise Integration Patterns with rule-based routing and mediation engine
+   - Main use cases: System-to-system integration, API-based integrations, complex data transformations, etc.
+   - Best suited for: Complex integration scenarios, integrations requiring data transformation, API-based integrations, etc.
+
+2. **RCLONE Based Managed File Transfer (MFT)**
+   - Description: A specialized solution for transferring files between different storage systems with advanced management capabilities
+   - Main use cases: File transfers between storage systems, file synchronization, backup and archiving, etc.
+   - Best suited for: Simple file transfers between storage systems, regular file synchronization tasks, backup and archiving workflows, etc.
+
+This tool enables the AI assistant to make informed recommendations about which integration type to use based on the user's specific requirements. For example:
+
+- If a user needs to sync files from SFTP to Azure Blob storage, the assistant will recommend RCLONE based MFT
+- If a user needs to integrate a CRM with an ERP system with data transformations, the assistant will recommend Apache Camel based Integration Flow
+
+The decision logic follows a simple rule: If the task involves transferring files (copy, move, sync) between two file systems (SMB, SFTP, Azure Blob, S3, local directories, etc.), use MFT. Otherwise, use Apache Camel based Integration Flow.
 
 ## Enhancement Goals
 
@@ -151,11 +173,13 @@ weikio-server/
 │       │   └── db-tracking/   # Database change tracking
 │       └── best-practices/    # Weik.io-specific best practices
 └── src/
-    ├── yaml-dsl-service.ts    # YAML DSL knowledge service
-    ├── template-service.ts    # Template management service
-    ├── best-practices-service.ts # Best practices enforcement
-    ├── dev-tools-service.ts   # Development tools integration
-    └── local-weikio-service.ts # Local Weik.io management
+    ├── integration-types-service.ts # Integration types information service
+    ├── metadata-service.ts    # Apache Camel metadata service
+    ├── yaml-dsl-service.ts    # YAML DSL knowledge service (planned)
+    ├── template-service.ts    # Template management service (planned)
+    ├── best-practices-service.ts # Best practices enforcement (planned)
+    ├── dev-tools-service.ts   # Development tools integration (planned)
+    └── local-weikio-service.ts # Local Weik.io management (planned)
 ```
 
 ## Implementation Roadmap
@@ -230,9 +254,10 @@ weikio-server/
 ## MCP Tools Implementation
 
 ### 1. Planning Tools
-- `analyze_integration_requirements`: Determine optimal approach and technology
-- `suggest_integration_pattern`: Recommend appropriate pattern for requirements
-- `get_best_practices`: Retrieve relevant best practices for specific integration type
+- `get_supported_integration_types`: Get information about supported integration types (implemented)
+- `analyze_integration_requirements`: Determine optimal approach and technology (planned)
+- `suggest_integration_pattern`: Recommend appropriate pattern for requirements (planned)
+- `get_best_practices`: Retrieve relevant best practices for specific integration type (planned)
 
 ### 2. Implementation Tools
 - `generate_camel_integration`: Generate Camel YAML flow
