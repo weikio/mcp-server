@@ -36,6 +36,7 @@ The MCP server currently provides:
 - Weik.io profile management
 - Docker Compose configuration for local Weik.io instances
 - Integration flow initialization
+- Integration deployment
 
 ### Integration Flow Initialization
 
@@ -58,6 +59,27 @@ initialize_integration(name: "hello-world", directory: "/path/to/your/project")
 
 // Using the CLI directly
 weikio integration init hello-world
+```
+
+### Integration Deployment
+
+The server includes a tool called `push_integration` that allows deploying an integration to a Weik.io instance:
+
+- Takes two parameters:
+  - `name`: Name of the integration to push (folder name)
+  - `directory`: Directory containing the integration (absolute path)
+- Pushes the integration to the currently active Weik.io profile
+- Validates that the integration exists and contains the required files
+
+This tool enables the AI assistant to help users deploy their integration flows to a Weik.io instance after they have been created and customized.
+
+Example usage:
+```
+// Using the MCP tool
+push_integration(name: "hello-world", directory: "/path/to/your/project")
+
+// Using the CLI directly
+weikio integration push hello-world
 ```
 
 ### Integration Type Decision Support
@@ -331,6 +353,7 @@ Example workflow:
 3. Verify connection with `list_agents` to ensure the profile works correctly
 
 ### 7. Publishing Tools
+- `push_integration`: Push an integration to a Weik.io instance (implemented)
 - `generate_push_commands`: Create commands to push to Weik.io
 - `create_deployment_checklist`: Generate pre-deployment verification steps
 
@@ -563,3 +586,61 @@ This project should be implemented with an iterative approach:
 5. Enhance with testing and deployment support
 
 Each iteration should deliver standalone value while building toward the complete vision.
+
+## Docker Container and CI/CD
+
+The MCP server can be run as a Docker container, with automated builds via GitHub Actions.
+
+### Docker Image
+
+The MCP server is containerized using Docker, making it easy to deploy and run in various environments. The Docker image is built on Node.js Alpine for a minimal footprint.
+
+#### Running the Docker Container
+
+```bash
+# Pull the latest image
+docker pull ghcr.io/[your-github-username]/weikio-server:latest
+
+# Run the container
+docker run -it ghcr.io/[your-github-username]/weikio-server
+```
+
+### CI/CD Pipeline
+
+The project uses GitHub Actions for continuous integration and delivery:
+
+1. **Automated Builds**: Every push to the main branch triggers a new build
+2. **Versioning**: Uses MinVer for automatic semantic versioning
+3. **Container Registry**: Images are published to GitHub Container Registry (ghcr.io)
+
+#### Versioning Strategy
+
+The project uses MinVer for automatic versioning:
+
+- Initial version starts at 1.0.0
+- Version numbers follow the pattern: 1.0.0, 1.0.1, 1.0.2, etc.
+- To create a new version, create and push a git tag:
+  ```bash
+  # For a patch release
+  git tag v1.0.1
+  git push origin v1.0.1
+  
+  # For a minor release
+  git tag v1.1.0
+  git push origin v1.1.0
+  
+  # For a major release
+  git tag v2.0.0
+  git push origin v2.0.0
+  ```
+
+#### GitHub Actions Workflow
+
+The GitHub Actions workflow:
+1. Checks out the code
+2. Sets up Node.js and installs dependencies
+3. Builds the TypeScript project
+4. Determines the version using MinVer
+5. Builds and pushes the Docker image with appropriate tags
+
+The workflow file is located at `.github/workflows/docker-build.yml`.
