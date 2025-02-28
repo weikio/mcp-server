@@ -1,4 +1,107 @@
-# Weik.io Integration Expert: MCP Server Enhancement Project
+# Weik.io Integration Expert: MCP Server
+
+[![npm version](https://img.shields.io/npm/v/@weikio/mcp-server.svg)](https://www.npmjs.com/package/@weikio/mcp-server)
+[![Docker Image](https://img.shields.io/badge/docker-ghcr.io%2Fweikio%2Fmcp--server-blue)](https://github.com/weikio/mcp-server/pkgs/container/mcp-server)
+
+## Project Overview
+
+This Model Context Protocol (MCP) server is designed specifically for the Weik.io Integration Platform, providing an intelligent assistant that guides developers through the complete integration lifecycle from planning through implementation, testing, and deployment.
+
+Weik.io is an open source integration and automation platform with agent-based architecture supporting cloud, on-premise, and hybrid deployments. It is built on **Apache Camel** and extends it with specialized capabilities including Integration Flows, API Management, Managed File Transfers, Event Hub, Entity Store, and Database change tracking.
+
+The MCP server exposes tools and resources that enable AI assistants to help with Weik.io integration tasks, providing access to Weik.io functionality, Apache Camel component metadata, and Kamelet information.
+
+## Configuration
+
+### Docker-based Configuration
+
+```json
+{
+  "mcpServers": {
+    "weikio": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "--network=host",
+        "ghcr.io/weikio/mcp-server:latest"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
+```
+
+### NPX-based Configuration
+
+```json
+{
+  "mcpServers": {
+    "weikio": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@weikio/mcp-server"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
+```
+
+## MCP Tools Implementation
+
+### 1. Planning Tools
+- `get_supported_integration_types`: Get information about supported integration types (implemented)
+- `analyze_integration_requirements`: Determine optimal approach and technology (planned)
+- `suggest_integration_pattern`: Recommend appropriate pattern for requirements (planned)
+- `get_best_practices`: Retrieve relevant best practices for specific integration type (planned)
+
+### 2. Implementation Tools
+- `initialize_integration`: Initialize a new integration flow with the specified name (implemented)
+- `generate_camel_integration`: Generate Camel YAML flow (planned)
+- `generate_mft_configuration`: Generate MFT config for file operations (planned)
+- `create_data_transformation`: Build JQ or other transformations based on sample data (planned)
+- `validate_implementation`: Check implementation against best practices (planned)
+- `apply_best_practices`: Analyze and enhance existing integration with best practices (planned)
+- `get_best_practice`: Retrieve detailed information about specific best practices (planned)
+- `check_compliance`: Validate integration against best practice standards (planned)
+
+### 3. Testing & Debugging Tools
+- `identify_test_parameters`: Determine required parameters for testing (planned)
+- `generate_test_configuration`: Create test setup files (planned)
+- `create_test_data`: Generate mock data for testing (planned)
+- `debug_transformation`: Interactive JQ/transformation debugging (planned)
+- `analyze_payload`: Examine message structure at any point (planned)
+- `trace_message_flow`: Visualize message path through integration (planned)
+- `diagnose_error`: Analyze errors and suggest solutions (planned)
+
+### 4. External Tool Integration
+- `setup_ngrok_tunnel`: Configure and start an ngrok tunnel for local endpoints (planned)
+- `get_ngrok_url`: Retrieve current ngrok public URL for use in integrations (planned)
+- `create_webhook_endpoint`: Generate new webhook.site endpoints for testing (planned)
+- `retrieve_webhook_requests`: Get received webhook payloads for analysis (planned)
+- `run_camel_jbang`: Execute Camel scripts for quick testing (planned)
+
+### 5. Local Weik.io Management
+- `get_docker_compose`: Get a Docker Compose file for setting up a local Weik.io instance (implemented)
+- `start_local_weikio`: Start local Weik.io using Docker Compose (planned)
+- `stop_local_weikio`: Stop the running environment (planned)
+- `restart_local_weikio`: Restart for quick refresh (planned)
+- `get_weikio_status`: Simple health check and status reporting (planned)
+- `reset_local_weikio`: Return environment to clean state (planned)
+
+### 6. Profile Management
+- `list_profiles`: List all Weik.io profiles (implemented)
+- `add_profile`: Add a new Weik.io profile with name, URL, and API key (implemented)
+
+### 7. Publishing Tools
+- `push_integration`: Push an integration to a Weik.io instance (implemented)
+- `generate_push_commands`: Create commands to push to Weik.io (planned)
+- `create_deployment_checklist`: Generate pre-deployment verification steps (planned)
 
 ## Technology Overview
 
@@ -21,10 +124,6 @@
   - Database change tracking
 - Developer-friendly tools with VS Code integration and CLI
 - Enterprise-ready with monitoring, observability, and security features
-
-## Project Vision
-
-An intelligent assistant that guides developers through the complete integration lifecycle using Apache Camel and Weik.io, from planning through implementation, testing, and deployment.
 
 ## Current State
 
@@ -299,64 +398,6 @@ weikio-server/
    - Test configuration generation
    - Deployment validation guidance
 
-## MCP Tools Implementation
-
-### 1. Planning Tools
-- `get_supported_integration_types`: Get information about supported integration types (implemented)
-- `analyze_integration_requirements`: Determine optimal approach and technology (planned)
-- `suggest_integration_pattern`: Recommend appropriate pattern for requirements (planned)
-- `get_best_practices`: Retrieve relevant best practices for specific integration type (planned)
-
-### 2. Implementation Tools
-- `initialize_integration`: Initialize a new integration flow with the specified name (implemented)
-- `generate_camel_integration`: Generate Camel YAML flow
-- `generate_mft_configuration`: Generate MFT config for file operations
-- `create_data_transformation`: Build JQ or other transformations based on sample data
-- `validate_implementation`: Check implementation against best practices
-- `apply_best_practices`: Analyze and enhance existing integration with best practices
-- `get_best_practice`: Retrieve detailed information about specific best practices
-- `check_compliance`: Validate integration against best practice standards
-
-### 3. Testing & Debugging Tools
-- `identify_test_parameters`: Determine required parameters for testing
-- `generate_test_configuration`: Create test setup files
-- `create_test_data`: Generate mock data for testing
-- `debug_transformation`: Interactive JQ/transformation debugging
-- `analyze_payload`: Examine message structure at any point
-- `trace_message_flow`: Visualize message path through integration
-- `diagnose_error`: Analyze errors and suggest solutions
-
-### 4. External Tool Integration
-- `setup_ngrok_tunnel`: Configure and start an ngrok tunnel for local endpoints
-- `get_ngrok_url`: Retrieve current ngrok public URL for use in integrations
-- `create_webhook_endpoint`: Generate new webhook.site endpoints for testing
-- `retrieve_webhook_requests`: Get received webhook payloads for analysis
-- `run_camel_jbang`: Execute Camel scripts for quick testing
-
-### 5. Local Weik.io Management
-- `get_docker_compose`: Get a Docker Compose file for setting up a local Weik.io instance (implemented)
-- `start_local_weikio`: Start local Weik.io using Docker Compose (planned)
-- `stop_local_weikio`: Stop the running environment (planned)
-- `restart_local_weikio`: Restart for quick refresh (planned)
-- `get_weikio_status`: Simple health check and status reporting (planned)
-- `reset_local_weikio`: Return environment to clean state (planned)
-
-### 6. Profile Management
-- `list_profiles`: List all Weik.io profiles (implemented)
-- `add_profile`: Add a new Weik.io profile with name, URL, and API key (implemented)
-
-These tools enable connecting to different Weik.io instances by managing profiles. When a new profile is added, it becomes the default profile for subsequent operations.
-
-Example workflow:
-1. Check existing profiles with `list_profiles`
-2. Add a new profile with `add_profile` if needed
-3. Verify connection with `list_agents` to ensure the profile works correctly
-
-### 7. Publishing Tools
-- `push_integration`: Push an integration to a Weik.io instance (implemented)
-- `generate_push_commands`: Create commands to push to Weik.io
-- `create_deployment_checklist`: Generate pre-deployment verification steps
-
 ## Extensibility Mechanisms
 
 The implementation should prioritize extensibility to allow future enhancements:
@@ -630,114 +671,6 @@ docker build -t weikio-server .
 docker run -it weikio-server
 ```
 
-#### Using as an MCP Server
-
-To use the Docker image as an MCP server in your AI assistant configuration:
-
-1. Add the server to your MCP configuration file (e.g., `cline_mcp_settings.json` for Claude):
-
-```json
-{
-  "mcpServers": {
-    "weikio": {
-      "command": "docker",
-      "args": [
-        "run", 
-        "-i", 
-        "--rm", 
-        "ghcr.io/weikio/mcp-server:latest"
-      ],
-      "disabled": false,
-      "autoApprove": []
-    }
-  }
-}
-```
-
-2. If you need to access local resources from the Docker container, you may need to add additional Docker arguments:
-
-```json
-{
-  "mcpServers": {
-    "weikio": {
-      "command": "docker",
-      "args": [
-        "run", 
-        "-i", 
-        "--rm",
-        "--network=host",
-        "ghcr.io/weikio/mcp-server:latest"
-      ],
-      "disabled": false,
-      "autoApprove": []
-    }
-  }
-}
-```
-
-3. For Windows users, to access services running on the host machine, use `host.docker.internal` instead of `localhost`:
-
-```json
-{
-  "mcpServers": {
-    "weikio": {
-      "command": "docker",
-      "args": [
-        "run", 
-        "-i", 
-        "--rm",
-        "ghcr.io/weikio/mcp-server:latest"
-      ],
-      "env": {
-        "HOST_URL": "http://host.docker.internal:8000"
-      },
-      "disabled": false,
-      "autoApprove": []
-    }
-  }
-}
-```
-
-### CI/CD Pipeline
-
-The project uses GitHub Actions for continuous integration and delivery:
-
-1. **Automated Builds**: Every push to the main branch triggers a new build
-2. **Versioning**: Uses MinVer for automatic semantic versioning
-3. **Container Registry**: Images are published to GitHub Container Registry (ghcr.io)
-
-#### Versioning Strategy
-
-The project uses MinVer for automatic versioning:
-
-- Initial version starts at 1.0.0
-- Version numbers follow the pattern: 1.0.0, 1.0.1, 1.0.2, etc.
-- To create a new version, create and push a git tag:
-  ```bash
-  # For a patch release
-  git tag v1.0.1
-  git push origin v1.0.1
-  
-  # For a minor release
-  git tag v1.1.0
-  git push origin v1.1.0
-  
-  # For a major release
-  git tag v2.0.0
-  git push origin v2.0.0
-  ```
-
-#### GitHub Actions Workflow
-
-The GitHub Actions workflow:
-1. Checks out the code
-2. Sets up Node.js and installs dependencies
-3. Builds the TypeScript project
-4. Determines the version using MinVer
-5. Builds and pushes the Docker image with appropriate tags
-
-The workflow file is located at `.github/workflows/docker-build.yml`.
-
 ## NPM Package
 
 The MCP server is also available as an npm package, making it easy to use with npx. The package is automatically published to npm via GitHub Actions when changes are pushed to the main branch.
@@ -774,41 +707,3 @@ Then run it with:
 ```bash
 weikio-mcp-server
 ```
-
-### Using with MCP Settings
-
-To use the npm package as an MCP server in your AI assistant configuration:
-
-1. Add the server to your MCP configuration file (e.g., `cline_mcp_settings.json` for Claude):
-
-```json
-{
-  "mcpServers": {
-    "weikio": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@weikio/mcp-server"
-      ],
-      "disabled": false,
-      "autoApprove": []
-    }
-  }
-}
-```
-
-This configuration will automatically download and run the latest version of the MCP server when needed.
-
-### Automated Publishing
-
-The package is automatically published to npm using GitHub Actions. The workflow:
-
-1. Runs when changes are pushed to the main branch
-2. Determines the version using git tags (via MinVer)
-3. Updates the package.json version
-4. Builds the TypeScript project
-5. Publishes to npm
-
-For more details, see:
-- `.github/workflows/npm-publish.yml` - GitHub workflow configuration
-- `NPM-PUBLISHING-GUIDE.md` - Detailed guide for npm publishing

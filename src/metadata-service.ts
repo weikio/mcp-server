@@ -523,10 +523,11 @@ export class MetadataService {
       result += '\n## Component Properties\n\n';
       
       for (const [key, prop] of Object.entries(component.componentProperties)) {
-        result += `### ${prop.displayName || prop.name || key}\n`;
+        result += `### ${prop.displayName || prop.name || key} (${key})\n`;
         if (prop.description) {
           result += `${prop.description}\n\n`;
         }
+        result += `- **Name**: ${key}\n`;
         result += `- **Type**: ${prop.type || 'unknown'}\n`;
         result += `- **Required**: ${prop.required ? 'Yes' : 'No'}\n`;
         
@@ -547,10 +548,11 @@ export class MetadataService {
       result += '\n## Endpoint Properties\n\n';
       
       for (const [key, prop] of Object.entries(component.properties)) {
-        result += `### ${prop.displayName || prop.name || key}\n`;
+        result += `### ${prop.displayName || prop.name || key} (${key})\n`;
         if (prop.description) {
           result += `${prop.description}\n\n`;
         }
+        result += `- **Name**: ${key}\n`;
         result += `- **Type**: ${prop.type || 'unknown'}\n`;
         result += `- **Required**: ${prop.required ? 'Yes' : 'No'}\n`;
         
@@ -571,10 +573,11 @@ export class MetadataService {
       result += '\n## Headers\n\n';
       
       for (const [key, prop] of Object.entries(component.headers)) {
-        result += `### ${prop.displayName || prop.name || key}\n`;
+        result += `### ${prop.displayName || prop.name || key} (${key})\n`;
         if (prop.description) {
           result += `${prop.description}\n\n`;
         }
+        result += `- **Name**: ${key}\n`;
         result += `- **Type**: ${prop.type || 'unknown'}\n`;
         result += `- **Required**: ${prop.required ? 'Yes' : 'No'}\n`;
         
@@ -595,10 +598,11 @@ export class MetadataService {
       result += '\n## Additional Properties\n\n';
       
       for (const [key, prop] of Object.entries(component.additionalProperties)) {
-        result += `### ${prop.displayName || prop.name || key}\n`;
+        result += `### ${prop.displayName || prop.name || key} (${key})\n`;
         if (prop.description) {
           result += `${prop.description}\n\n`;
         }
+        result += `- **Name**: ${key}\n`;
         result += `- **Type**: ${prop.type || 'unknown'}\n`;
         result += `- **Required**: ${prop.required ? 'Yes' : 'No'}\n`;
         
