@@ -19,6 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Required for MinVer to work correctly
+          filter: tree:0 # Treeless clone for better performance
 
       - name: Set up Node.js
         uses: actions/setup-node@v4
@@ -35,12 +36,12 @@ jobs:
       # Use MinVer to determine the version
       - name: Determine Version
         id: minver
-        uses: thefringeninja/action-minver@2.0.0
+        uses: thefringeninja/action-minver@2.0.0-preview1
         with:
           # Start with version 1.0.0
-          default-pre-release-phase: '' # No pre-release phase
           minimum-major-minor: 1.0 # Start with 1.0.x
           tag-prefix: v # Use 'v' prefix for version tags
+          default-pre-release-phase: '' # No pre-release phase
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
