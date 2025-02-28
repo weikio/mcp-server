@@ -12,6 +12,7 @@ import { exec } from "child_process";
 import { promisify } from "util";
 import { metadataService, Component, Kamelet } from "./metadata-service.js";
 import { integrationTypesService } from "./integration-types-service.js";
+import { dockerComposeConfig } from "./docker-compose-config.js";
 
 const execAsync = promisify(exec);
 
@@ -149,6 +150,15 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             }
           },
           required: ["name"]
+        }
+      },
+      {
+        name: "get_docker_compose",
+        description: "Get a Docker Compose file for setting up a local Weik.io instance",
+        inputSchema: {
+          type: "object",
+          properties: {},
+          required: []
         }
       }
     ]
@@ -345,6 +355,15 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         content: [{
           type: "text",
           text: metadataService.formatKameletDetails(kamelet)
+        }]
+      };
+    }
+
+    case "get_docker_compose": {
+      return {
+        content: [{
+          type: "text",
+          text: dockerComposeConfig
         }]
       };
     }
