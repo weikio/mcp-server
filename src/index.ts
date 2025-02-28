@@ -230,6 +230,24 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           },
           required: ["name", "directory"]
         }
+      },
+      {
+        name: "push_integration",
+        description: "Push an integration to a Weik.io instance",
+        inputSchema: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              description: "Name of the integration to push (folder name)"
+            },
+            directory: {
+              type: "string",
+              description: "Directory containing the integration (absolute path)"
+            }
+          },
+          required: ["name", "directory"]
+        }
       }
     ]
   };
@@ -552,6 +570,84 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         throw new McpError(
           ErrorCode.InternalError,
           `Failed to initialize integration: ${error instanceof Error ? error.message : String(error)}`
+        );
+      }
+    }
+
+    case "push_integration": {
+      const name = String(request.params.arguments?.name);
+      const directory = String(request.params.arguments?.directory);
+      
+      if (!name) {
+        throw new McpError(
+          ErrorCode.InvalidParams,
+          "Integration name is required"
+        );
+      }
+      
+      if (!directory) {
+        throw new McpError(
+          ErrorCode.InvalidParams,
+          "Directory is required"
+        );
+      }
+
+      try {
+        // Import required modules
+        const fs = await import('fs');
+        const path = await import('path');
+        
+        // Check if the integration directory exists
+        const integrationDir = path.join(directory, name);
+        if (!fs.existsSync(integrationDir)) {
+          console.error(`Integration directory does not exist: ${integrationDir}`);
+          throw new McpError(
+            ErrorCode.InvalidParams,
+            `Integration '${name}' not found in directory '${directory}'.`
+          );
+        }
+
+        // Check if integration.camel.yaml exists
+        const yamlPath = path.join(integrationDir, 'integration.camel.yaml');
+        if (!fs.existsSync(yamlPath)) {
+          console.error(`Integration YAML file not found: ${yamlPath}`);
+          throw new McpError(
+            ErrorCode.InvalidParams,
+            `Integration YAML file not found for '${name}'. Expected at: ${yamlPath}`
+          );
+        }
+        
+        console.error(`Pushing integration '${name}' from directory: ${directory}`);
+        
+        // Execute the push command in the specified directory
+        const options = {
+          cwd: directory,
+          env: {
+            ...process.env,
+            PWD: directory,
+            WEIKIO_HOME: directory
+          }
+        };
+        
+        const { stdout, stderr } = await execAsync(`weikio integration push ${name}`, options);
+        
+        if (stderr && stderr.trim() !== '') {
+          console.error(`Command stderr: ${stderr}`);
+          // Some CLI tools output warnings to stderr but still succeed
+          // We'll include stderr in the response but not treat it as an error
+        }
+        
+        return {
+          content: [{
+            type: "text",
+            text: `Successfully pushed integration '${name}'.\n\n${stdout}${stderr ? '\nWarnings/Info:\n' + stderr : ''}`
+          }]
+        };
+      } catch (error) {
+        console.error(`Error pushing integration: ${error instanceof Error ? error.message : String(error)}`);
+        throw new McpError(
+          ErrorCode.InternalError,
+          `Failed to push integration: ${error instanceof Error ? error.message : String(error)}`
         );
       }
     }

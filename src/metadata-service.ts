@@ -635,8 +635,10 @@ export class MetadataService {
       result += '\n## Properties\n\n';
       
       for (const [key, prop] of Object.entries(kamelet.spec.definition.properties)) {
-        result += `### ${prop.title || key}\n`;
+        // Include both title and property name
+        result += `### ${prop.title || key} (${key})\n`;
         result += `${prop.description}\n\n`;
+        result += `- **Name**: ${key}\n`;  // Explicitly include the property name
         result += `- **Type**: ${prop.type}\n`;
         result += `- **Required**: ${kamelet.spec.definition.required?.includes(key) ? 'Yes' : 'No'}\n`;
         
