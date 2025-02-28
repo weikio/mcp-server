@@ -737,3 +737,78 @@ The GitHub Actions workflow:
 5. Builds and pushes the Docker image with appropriate tags
 
 The workflow file is located at `.github/workflows/docker-build.yml`.
+
+## NPM Package
+
+The MCP server is also available as an npm package, making it easy to use with npx. The package is automatically published to npm via GitHub Actions when changes are pushed to the main branch.
+
+### Prerequisites
+
+Before using the npm package, ensure you have the following installed:
+
+1. **Node.js** (v20 or later)
+2. **.NET 8 SDK** - [Installation instructions](https://dotnet.microsoft.com/download/dotnet/8.0)
+3. **Weikio CLI** - Install with:
+   ```bash
+   dotnet tool install weikio-cli --global --prerelease
+   ```
+
+Ensure all tools are available in your PATH.
+
+### Installation
+
+You can use the package directly with npx without installing it:
+
+```bash
+npx @weikio/mcp-server
+```
+
+Or install it globally:
+
+```bash
+npm install -g @weikio/mcp-server
+```
+
+Then run it with:
+
+```bash
+weikio-mcp-server
+```
+
+### Using with MCP Settings
+
+To use the npm package as an MCP server in your AI assistant configuration:
+
+1. Add the server to your MCP configuration file (e.g., `cline_mcp_settings.json` for Claude):
+
+```json
+{
+  "mcpServers": {
+    "weikio": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@weikio/mcp-server"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}
+```
+
+This configuration will automatically download and run the latest version of the MCP server when needed.
+
+### Automated Publishing
+
+The package is automatically published to npm using GitHub Actions. The workflow:
+
+1. Runs when changes are pushed to the main branch
+2. Determines the version using git tags (via MinVer)
+3. Updates the package.json version
+4. Builds the TypeScript project
+5. Publishes to npm
+
+For more details, see:
+- `.github/workflows/npm-publish.yml` - GitHub workflow configuration
+- `NPM-PUBLISHING-GUIDE.md` - Detailed guide for npm publishing

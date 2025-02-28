@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "weikio": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "@weikio/mcp-server"
+      ],
+      "disabled": false,
+      "autoApprove": []
+    }
+  }
+}

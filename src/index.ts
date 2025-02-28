@@ -22,7 +22,7 @@ const execAsync = promisify(exec);
  */
 const server = new Server(
   {
-    name: "weikio-server",
+    name: "@weikio/mcp-server",
     version: "0.1.0",
   },
   {
