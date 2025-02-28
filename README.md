@@ -35,6 +35,30 @@ The MCP server currently provides:
 - Integration type decision support
 - Weik.io profile management
 - Docker Compose configuration for local Weik.io instances
+- Integration flow initialization
+
+### Integration Flow Initialization
+
+The server now includes a tool called `initialize_integration` that allows creating a new integration flow:
+
+- Takes two parameters:
+  - `name`: Name of the integration flow (must be lowercase, can include hyphens)
+  - `directory`: Directory where the integration flow should be created (absolute path)
+- Creates a new folder with the specified name in the specified directory
+- Generates two files within the folder:
+  - `integration.camel.yaml`: Apache Camel YAML flow definition
+  - `application.properties`: Configuration for flow-specific parameters/properties/variables
+
+This tool enables the AI assistant to help users create and set up new integration flows quickly in their preferred location. The integration flow can then be customized based on the user's specific requirements.
+
+Example usage:
+```
+// Using the MCP tool
+initialize_integration(name: "hello-world", directory: "/path/to/your/project")
+
+// Using the CLI directly
+weikio integration init hello-world
+```
 
 ### Integration Type Decision Support
 
@@ -262,6 +286,7 @@ weikio-server/
 - `get_best_practices`: Retrieve relevant best practices for specific integration type (planned)
 
 ### 2. Implementation Tools
+- `initialize_integration`: Initialize a new integration flow with the specified name (implemented)
 - `generate_camel_integration`: Generate Camel YAML flow
 - `generate_mft_configuration`: Generate MFT config for file operations
 - `create_data_transformation`: Build JQ or other transformations based on sample data

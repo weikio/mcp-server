@@ -37,12 +37,33 @@ const server = new Server(
  */
 async function executeWeikioCommand(command: string): Promise<string> {
   try {
-    const { stdout, stderr } = await execAsync(`weikio ${command}`);
+    // Get the current working directory
+    const currentDir = process.cwd();
+    console.error(`Current working directory: ${currentDir}`);
+    
+    // Execute the command in the current working directory
+    const options = {
+      cwd: currentDir,
+      env: {
+        ...process.env,
+        // Add any environment variables that might help with directory resolution
+        PWD: currentDir,
+        WEIKIO_HOME: currentDir
+      }
+    };
+    
+    console.error(`Executing command: weikio ${command} in directory: ${currentDir}`);
+    const { stdout, stderr } = await execAsync(`weikio ${command}`, options);
+    
     if (stderr) {
+      console.error(`Command stderr: ${stderr}`);
       throw new Error(stderr);
     }
+    
+    console.error(`Command stdout: ${stdout}`);
     return stdout;
   } catch (error) {
+    console.error(`Command error: ${error instanceof Error ? error.message : String(error)}`);
     throw new McpError(
       ErrorCode.InternalError,
       `Weik.io CLI error: ${error instanceof Error ? error.message : String(error)}`
@@ -190,6 +211,24 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             }
           },
           required: ["name", "url", "apiKey"]
+        }
+      },
+      {
+        name: "initialize_integration",
+        description: "Initialize a new integration flow with the specified name in the specified directory",
+        inputSchema: {
+          type: "object",
+          properties: {
+            name: {
+              type: "string",
+              description: "Name of the integration flow to create (lowercase, can include hyphens)"
+            },
+            directory: {
+              type: "string",
+              description: "Directory where the integration flow should be created (absolute path)"
+            }
+          },
+          required: ["name", "directory"]
         }
       }
     ]
@@ -428,6 +467,93 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           text: output
         }]
       };
+    }
+
+    case "initialize_integration": {
+      const name = String(request.params.arguments?.name);
+      const directory = String(request.params.arguments?.directory);
+      
+      if (!name) {
+        throw new McpError(
+          ErrorCode.InvalidParams,
+          "Integration name is required"
+        );
+      }
+      
+      if (!directory) {
+        throw new McpError(
+          ErrorCode.InvalidParams,
+          "Directory is required"
+        );
+      }
+
+      // Validate integration name (lowercase, only hyphens allowed as special characters)
+      const nameRegex = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+      if (!nameRegex.test(name)) {
+        throw new McpError(
+          ErrorCode.InvalidParams,
+          "Invalid integration name. Use lowercase letters, numbers, and hyphens only (e.g., 'hello-world')."
+        );
+      }
+
+      try {
+        // Import required modules
+        const fs = await import('fs');
+        const path = await import('path');
+        
+        console.error(`Using specified directory: ${directory}`);
+        
+        // Create the integration directory path
+        const integrationDir = path.join(directory, name);
+        console.error(`Creating integration directory: ${integrationDir}`);
+        
+        // Check if directory already exists
+        if (fs.existsSync(integrationDir)) {
+          console.error(`Directory already exists: ${integrationDir}`);
+          throw new McpError(
+            ErrorCode.InvalidParams,
+            `Integration '${name}' already exists. Please choose a different name.`
+          );
+        }
+        
+        // Create the directory
+        fs.mkdirSync(integrationDir);
+        console.error(`Created directory: ${integrationDir}`);
+        
+        // Create integration.camel.yaml with default content
+        const yamlContent = `- from:
+    uri: "timer:yaml"
+    parameters:
+      period: "3500"
+    steps:
+      - setBody:
+          simple: "Hello Weik.io: {{AdditionalMessage}}"
+      - log: "\${body}"`;
+        
+        const yamlPath = path.join(integrationDir, 'integration.camel.yaml');
+        fs.writeFileSync(yamlPath, yamlContent);
+        console.error(`Created file: ${yamlPath}`);
+        
+        // Create application.properties with default content
+        const propertiesContent = `AdditionalMessage=This message comes from the application.properties`;
+        const propertiesPath = path.join(integrationDir, 'application.properties');
+        fs.writeFileSync(propertiesPath, propertiesContent);
+        console.error(`Created file: ${propertiesPath}`);
+        
+        // Return success message
+        return {
+          content: [{
+            type: "text",
+            text: `Successfully initialized integration flow '${name}'.\n\nCreated files:\n- ${name}/integration.camel.yaml: Apache Camel YAML flow definition\n- ${name}/application.properties: Configuration for flow-specific parameters\n\nTo run the integration: weikio integration run ${name}`
+          }]
+        };
+      } catch (error) {
+        console.error(`Error initializing integration: ${error instanceof Error ? error.message : String(error)}`);
+        throw new McpError(
+          ErrorCode.InternalError,
+          `Failed to initialize integration: ${error instanceof Error ? error.message : String(error)}`
+        );
+      }
     }
 
     default:
